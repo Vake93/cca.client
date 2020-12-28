@@ -1,24 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Header from "./components/Header/Header";
+import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
+import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {process.env.REACT_APP_WEBSITE_NAME}
-        </a>
-      </header>
+      <Header />
+      <div className="container d-flex align-items-center flex-column">
+        <RegistrationForm />
+      </div>
     </div>
   );
 }
