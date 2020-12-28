@@ -1,12 +1,17 @@
 import React, { useState } from "react";
+import "./RegistrationForm.css";
 
-function RegistrationForm() {
+interface RegistrationFormProps {
+  updateMessage: (message: string | null) => void;
+}
+
+function RegistrationForm(props: RegistrationFormProps) {
   const [state, setState] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,8 +22,31 @@ function RegistrationForm() {
     }));
   };
 
+  const handleSubmitClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    props.updateMessage(null);
+    if (state.confirmPassword !== state.password) {
+      props.updateMessage("Passwords do not match");
+    }
+  };
+
+  const handleCancelClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setState({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
+
   return (
-    <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
+    <div className="card col-6 login-card">
       <form>
         <div className="form-group text-left">
           <label>First Name</label>
@@ -28,6 +56,7 @@ function RegistrationForm() {
             id="firstName"
             placeholder="Enter First Name"
             onChange={handleChange}
+            value={state.firstName}
           />
         </div>
 
@@ -39,6 +68,7 @@ function RegistrationForm() {
             id="lastName"
             placeholder="Enter Last Name"
             onChange={handleChange}
+            value={state.lastName}
           />
         </div>
 
@@ -51,6 +81,7 @@ function RegistrationForm() {
             aria-describedby="emailHelp"
             placeholder="Enter email"
             onChange={handleChange}
+            value={state.email}
           />
           <small id="emailHelp" className="form-text text-muted">
             We'll never share your email with anyone else.
@@ -65,6 +96,7 @@ function RegistrationForm() {
             id="password"
             placeholder="Password"
             onChange={handleChange}
+            value={state.password}
           />
         </div>
 
@@ -76,24 +108,29 @@ function RegistrationForm() {
             id="confirmPassword"
             placeholder="Confirm Password"
             onChange={handleChange}
+            value={state.confirmPassword}
           />
         </div>
 
-        <button
-          type="submit"
-          className="btn btn-secondary"
-          style={{ marginRight: "5px" }}
-        >
-          Cancel
-        </button>
+        <div className="hv-center">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ marginRight: "5px", width: "100px" }}
+            onClick={handleCancelClick}
+          >
+            Clear
+          </button>
 
-        <button
-          type="submit"
-          className="btn btn-primary"
-          style={{ marginLeft: "5px" }}
-        >
-          Register
-        </button>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ marginLeft: "5px", width: "100px" }}
+            onClick={handleSubmitClick}
+          >
+            Register
+          </button>
+        </div>
       </form>
     </div>
   );
