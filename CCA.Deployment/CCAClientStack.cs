@@ -22,7 +22,7 @@ namespace CCA.Client.Deployment
                 StaticWebsite = new AccountStaticWebsiteArgs
                 {
                     IndexDocument = "index.html",
-                    Error404Document = "404.html"
+                    Error404Document = "index.html"
                 }
             });
 
