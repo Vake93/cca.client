@@ -2,7 +2,8 @@
     margin-top: 20px;
 }
 
-.successMessage {
-    color: green;
+.loginText {
+    color: #007bff;
     font-weight: bold;
+    cursor: pointer;
 }

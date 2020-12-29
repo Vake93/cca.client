@@ -4,11 +4,9 @@ import { UserService } from "../../services/UserService";
 import "./RegistrationForm.css";
 import { RegisterResult } from "../../services/Models/Register";
 
-interface RegistrationFormProps {
-  updateMessage: (message: string | null) => void;
-}
-
-function RegistrationForm(props: RegistrationFormProps) {
+function RegistrationForm() {
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
   const [state, setState] = useState({
     firstName: "",
@@ -30,13 +28,15 @@ function RegistrationForm(props: RegistrationFormProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    props.updateMessage(null);
     setEditable(false);
 
     if (validateData()) {
+      setSuccessMessage("Creating your account...");
       UserService.registerUser(state)
         .then(registerDone)
-        .finally(() => setEditable(true));
+        .finally(() => {
+          setEditable(true);
+        });
     } else {
       setEditable(true);
     }
@@ -44,40 +44,46 @@ function RegistrationForm(props: RegistrationFormProps) {
 
   const registerDone = (e: RegisterResult) => {
     if (!e.success && e.errorMessage) {
-      props.updateMessage(e.errorMessage);
+      setSuccessMessage(null);
+      setErrorMessage(e.errorMessage);
       return;
     }
+
+    setSuccessMessage("Account created. Logging you in!");
 
     UserService.loginUser({
       email: state.email,
       password: state.password,
       rememberPassword: true,
-    });
+    }).then(() => setSuccessMessage("Done"));
   };
 
   const validateData = (): boolean => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
     if (state.firstName.length === 0) {
-      props.updateMessage("First name is required");
+      setErrorMessage("First name is required");
       return false;
     }
 
     if (state.lastName.length === 0) {
-      props.updateMessage("Last name is required");
+      setErrorMessage("Last name is required");
       return false;
     }
 
     if (!Validator.validateEmail(state.email)) {
-      props.updateMessage("Invalid email address");
+      setErrorMessage("Invalid email address");
       return false;
     }
 
     if (state.password.length < 6) {
-      props.updateMessage("Password need to at least 6 characters");
+      setErrorMessage("Password need to at least 6 characters");
       return false;
     }
 
     if (state.confirmPassword !== state.password) {
-      props.updateMessage("Passwords do not match");
+      setErrorMessage("Passwords do not match");
       return false;
     }
 
@@ -191,6 +197,27 @@ function RegistrationForm(props: RegistrationFormProps) {
           </button>
         </div>
       </form>
+
+      <div
+        className="alert alert-success mt-2"
+        style={{ display: successMessage ? "block" : "none" }}
+        role="alert"
+      >
+        {successMessage}
+      </div>
+
+      <div
+        className="alert alert-danger mt-2"
+        style={{ display: errorMessage ? "block" : "none" }}
+        role="alert"
+      >
+        {errorMessage}
+      </div>
+
+      <div className="mt-2" style={{ paddingBottom: "5px" }}>
+        <span>Already have an account? </span>
+        <span className="loginText">Login here</span>
+      </div>
     </div>
   );
 }
