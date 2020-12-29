@@ -1,4 +1,6 @@
 using Pulumi;
+using Pulumi.Azure.Cdn;
+using Pulumi.Azure.Cdn.Inputs;
 using Pulumi.Azure.Core;
 using Pulumi.Azure.Storage;
 using Pulumi.Azure.Storage.Inputs;
@@ -21,8 +23,59 @@ namespace CCA.Client.Deployment
                 AccountKind = "StorageV2",
                 StaticWebsite = new AccountStaticWebsiteArgs
                 {
-                    IndexDocument = "index.html",
-                    Error404Document = "index.html"
+                    IndexDocument = "index.html"
+                }
+            });
+
+            var cdnProfile = new Profile("CCA-CDN", new ProfileArgs
+            {
+                Location = resourceGroup.Location,
+                ResourceGroupName = resourceGroup.Name,
+                Sku = "Standard_Microsoft",
+            });
+
+            var cdnEndpoint = new Endpoint("cca", new EndpointArgs
+            {
+                Name = "cca",
+                ProfileName = cdnProfile.Name,
+                Location = resourceGroup.Location,
+                ResourceGroupName = resourceGroup.Name,
+                OriginHostHeader = storageAccount.PrimaryWebHost,
+                Origins =
+                {
+                    new EndpointOriginArgs
+                    {
+                        Name = "ccasite",
+                        HostName = storageAccount.PrimaryWebHost,
+                        HttpPort = 80,
+                        HttpsPort = 443
+                    }
+                },
+                DeliveryRules =
+                {
+                    new EndpointDeliveryRuleArgs
+                    {
+                        Name = "SPA",
+                        Order = 1,
+                        UrlFileExtensionConditions =
+                        {
+                            new EndpointDeliveryRuleUrlFileExtensionConditionArgs
+                            {
+                                Operator = "LessThan",
+                                NegateCondition = false,
+                                MatchValues =
+                                {
+                                    "1"
+                                },
+                            }
+                        },
+                        UrlRewriteAction = new EndpointDeliveryRuleUrlRewriteActionArgs
+                        {
+                            Destination = "/index.html",
+                            PreserveUnmatchedPath = false,
+                            SourcePattern = "/"
+                        }
+                    }
                 }
             });
 
@@ -43,8 +96,13 @@ namespace CCA.Client.Deployment
             }
 
             StaticEndpoint = storageAccount.PrimaryWebEndpoint;
+            CdnEndpoint = cdnEndpoint.HostName;
         }
 
-        [Output] public Output<string> StaticEndpoint { get; set; }
+        [Output]
+        public Output<string> StaticEndpoint { get; set; }
+
+        [Output]
+        public Output<string> CdnEndpoint { get; set; }
     }
 }
