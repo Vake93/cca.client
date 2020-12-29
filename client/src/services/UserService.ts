@@ -9,6 +9,10 @@ import { ApiService } from "./ApiService";
 const UserServiceUrl = process.env.REACT_APP_USER_SERVICE_URL;
 
 export const UserService = {
+  loggedInUser: (): boolean => {
+    const token = localStorage.getItem("TOKEN");
+    return token !== null && token !== "";
+  },
   loginUser: async (e: LoginData): Promise<LoginResult> => {
     var loginApiResult = await ApiService.post<LoginApiResult>(
       `${UserServiceUrl}/api/users/login`,
@@ -18,7 +22,7 @@ export const UserService = {
     if (loginApiResult) {
       localStorage.setItem("TOKEN", loginApiResult.token ?? "");
       localStorage.setItem("REFRESH_TOKEN", loginApiResult.refreshToken ?? "");
-      
+
       return {
         success: !loginApiResult.errors,
         errorMessage: loginApiResult.errors,
@@ -29,6 +33,11 @@ export const UserService = {
       success: false,
       errorMessage: "Something went wrong",
     };
+  },
+
+  logoutUser: (): void => {
+    localStorage.removeItem("TOKEN");
+    localStorage.removeItem("REFRESH_TOKEN");
   },
 
   registerUser: async (e: RegisterData): Promise<RegisterResult> => {

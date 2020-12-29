@@ -1,12 +1,47 @@
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { UserService } from "../../services/UserService";
 
-function Header() {
-    return(
-        <nav className="navbar navbar-dark bg-primary">
-            <div className="row col-12 d-flex justify-content-center text-white">
-            <span className="h3">Register</span>
-            </div>
-        </nav>
-    );
+function Header({ location, history }: RouteComponentProps) {
+  const getTitle = () => {
+    if (location.pathname === "/login") {
+      return "Login";
+    }
+
+    if (location.pathname === "/register") {
+      return "Register";
+    }
+
+    return "CCA Project Home";
+  };
+
+  const logoutUser = () => {
+    UserService.logoutUser();
+    history.push("/login")
+  }
+
+  const renderLogout = () => {
+    if (UserService.loggedInUser()) {
+      return (
+        <div className="ml-auto">
+          <button
+            className="btn btn-danger"
+            onClick={logoutUser}
+          >
+            Logout
+          </button>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <nav className="navbar navbar-dark bg-primary">
+      <div className="row col-12 d-flex text-white">
+        <span className="h3">{getTitle()}</span>
+        {renderLogout()}
+      </div>
+    </nav>
+  );
 }
 
-export default Header;
+export default withRouter(Header);
