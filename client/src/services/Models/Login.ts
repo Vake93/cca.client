@@ -19,3 +19,8 @@ export interface AuthUrlResult {
   url? : string;
   errors?: string;
 }
+
+export interface OAuthData {
+  token: string;
+  state: string;
+}

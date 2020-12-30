@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./components/Header/Header";
 import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
 import LoginForm from "./components/LoginForm/LoginForm";
+import OAuth from "./components/OAuth/OAuth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 
@@ -17,6 +18,9 @@ function App() {
             </Route>
             <Route path="/login" exact={true}>
               <LoginForm />
+            </Route>
+            <Route path="/oauth" exact={true}>
+              <OAuth />
             </Route>
           </Switch>
         </div>

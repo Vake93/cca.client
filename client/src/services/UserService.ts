@@ -8,6 +8,7 @@ import {
   LoginResult,
   LoginApiResult,
   AuthUrlResult,
+  OAuthData,
 } from "./Models/Login";
 import { ApiService } from "./ApiService";
 
@@ -77,4 +78,26 @@ export const UserService = {
 
     return "";
   },
+
+  oauth: async(e: OAuthData): Promise<LoginResult> => {
+    var loginApiResult = await ApiService.post<LoginApiResult>(
+      `${UserServiceUrl}/api/users/oauth`,
+      e
+    );
+
+    if (loginApiResult) {
+      localStorage.setItem("TOKEN", loginApiResult.token ?? "");
+      localStorage.setItem("REFRESH_TOKEN", loginApiResult.refreshToken ?? "");
+
+      return {
+        success: !loginApiResult.errors,
+        errorMessage: loginApiResult.errors,
+      };
+    }
+
+    return {
+      success: false,
+      errorMessage: "Something went wrong",
+    };
+  }
 };

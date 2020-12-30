@@ -11,6 +11,10 @@ function Header({ location, history }: RouteComponentProps) {
       return "Register";
     }
 
+    if (location.pathname === "/oauth") {
+      return "Login";
+    }
+
     return "CCA Project Home";
   };
 
