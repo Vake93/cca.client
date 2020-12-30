@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./components/Header/Header";
-import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
-import LoginForm from "./components/LoginForm/LoginForm";
+import Registration from "./components/Registration/Registration";
+import Login from "./components/Login/Login";
 import OAuth from "./components/OAuth/OAuth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
@@ -14,10 +14,10 @@ function App() {
         <div className="container d-flex align-items-center flex-column">
           <Switch>
             <Route path="/register" exact={true}>
-              <RegistrationForm />
+              <Registration />
             </Route>
             <Route path="/login" exact={true}>
-              <LoginForm />
+              <Login />
             </Route>
             <Route path="/oauth" exact={true}>
               <OAuth />

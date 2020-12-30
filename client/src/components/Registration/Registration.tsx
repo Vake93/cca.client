@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Validator } from "../../services/Validator";
 import { UserService } from "../../services/UserService";
-import "./RegistrationForm.css";
+import "./Registration.css";
 import { RegisterResult } from "../../services/Models/Register";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 

@@ -3,12 +3,12 @@ import { Validator } from "../../services/Validator";
 import { UserService } from "../../services/UserService";
 import { LoginResult } from "../../services/Models/Login";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import "./LoginForm.css";
+import "./Login.css";
 
 import googleIcon from "../../assets/google.svg";
 import microsoftIcon from "../../assets/microsoft.svg";
 
-function LoginForm({ history }: RouteComponentProps) {
+function Login({ history }: RouteComponentProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
   const [loginData, setLoginData] = useState({
@@ -204,4 +204,4 @@ function LoginForm({ history }: RouteComponentProps) {
   );
 }
 
-export default withRouter(LoginForm);
+export default withRouter(Login);
