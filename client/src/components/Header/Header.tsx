@@ -9,18 +9,26 @@ interface HeaderProps extends RouteComponentProps {
 function Header({ location, history, user }: HeaderProps) {
   const getTitle = () => {
     if (location.pathname === "/login") {
-      return "Login";
+      return "CCA Login";
     }
 
     if (location.pathname === "/register") {
-      return "Register";
+      return "CCA Register";
     }
 
     if (location.pathname === "/oauth") {
-      return "Login";
+      return "CCA Login";
     }
 
-    return "CCA Project Home";
+    if (location.pathname === "/new-event") {
+      return "New Event";
+    }
+
+    if (location.pathname === "/") {
+      return "CCA Events";
+    }
+
+    return "CCA Project";
   };
 
   const logoutUser = () => {
@@ -33,7 +41,11 @@ function Header({ location, history, user }: HeaderProps) {
     if (user && user.email !== "") {
       return (
         <div className="ml-auto">
-          <button className="btn btn-danger" onClick={logoutUser}>
+          <button
+            className="btn btn-warning"
+            style={{ height: "40px", width: "100px" }}
+            onClick={logoutUser}
+          >
             Logout
           </button>
         </div>
