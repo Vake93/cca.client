@@ -5,10 +5,13 @@ import { LoginResult } from "../../services/Models/Login";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import "./LoginForm.css";
 
+import googleIcon from "../../assets/google.svg";
+import microsoftIcon from "../../assets/microsoft.svg";
+
 function LoginForm({ history }: RouteComponentProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
-  const [state, setState] = useState({
+  const [loginData, setLoginData] = useState({
     email: "",
     password: "",
     rememberPassword: false,
@@ -16,7 +19,7 @@ function LoginForm({ history }: RouteComponentProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setState((prevState) => ({
+    setLoginData((prevState) => ({
       ...prevState,
       [id]: value,
     }));
@@ -29,7 +32,7 @@ function LoginForm({ history }: RouteComponentProps) {
     setEditable(false);
 
     if (validateData()) {
-      UserService.loginUser(state)
+      UserService.loginUser(loginData)
         .then(loginDone)
         .finally(() => {
           setEditable(true);
@@ -48,31 +51,42 @@ function LoginForm({ history }: RouteComponentProps) {
     history.push("/");
   };
 
+  const handleClearClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setLoginData({
+      email: "",
+      password: "",
+      rememberPassword: false,
+    });
+  };
+
+  const handleOAuth = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setEditable(false);
+
+    const { id: provider } = e.target as HTMLButtonElement;
+
+    UserService.getAuthUrl(provider).then(
+      (url) => (window.location.href = url)
+    );
+  };
+
   const validateData = (): boolean => {
     setErrorMessage(null);
 
-    if (!Validator.validateEmail(state.email)) {
+    if (!Validator.validateEmail(loginData.email)) {
       setErrorMessage("Invalid email address");
       return false;
     }
 
-    if (state.password.length === 0) {
+    if (loginData.password.length === 0) {
       setErrorMessage("Password is required");
       return false;
     }
 
     return true;
-  };
-
-  const handleClearClick = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    setState({
-      email: "",
-      password: "",
-      rememberPassword: false,
-    });
   };
 
   return (
@@ -86,7 +100,7 @@ function LoginForm({ history }: RouteComponentProps) {
             id="email"
             placeholder="Enter email"
             onChange={handleChange}
-            value={state.email}
+            value={loginData.email}
             readOnly={!editable}
           />
         </div>
@@ -99,7 +113,7 @@ function LoginForm({ history }: RouteComponentProps) {
             id="password"
             placeholder="Password"
             onChange={handleChange}
-            value={state.password}
+            value={loginData.password}
             readOnly={!editable}
           />
         </div>
@@ -108,7 +122,7 @@ function LoginForm({ history }: RouteComponentProps) {
           <button
             type="button"
             className="btn btn-secondary"
-            style={{ marginRight: "5px", width: "100px" }}
+            style={{ marginRight: "5px", height: "40px", width: "100px" }}
             onClick={handleClearClick}
             disabled={!editable}
           >
@@ -118,11 +132,54 @@ function LoginForm({ history }: RouteComponentProps) {
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ marginLeft: "5px", width: "100px" }}
+            style={{ marginLeft: "5px", height: "40px", width: "100px" }}
             onClick={handleSubmitClick}
             disabled={!editable}
           >
             Login
+          </button>
+        </div>
+
+        <div style={{ marginTop: "20px" }}>
+          <label>Login with a different account?</label>
+        </div>
+        <div>
+          <button
+            id="Google"
+            type="button"
+            className="btn btn-light"
+            style={{ marginRight: "5px" }}
+            onClick={handleOAuth}
+            disabled={!editable}
+          >
+            <span>
+              <img
+                id="Google"
+                alt="google-icon"
+                src={googleIcon}
+                style={{ height: "40px", width: "40px" }}
+              />
+            </span>
+            Google
+          </button>
+
+          <button
+            id="Microsoft"
+            type="button"
+            className="btn btn-light"
+            style={{ marginLeft: "5px" }}
+            onClick={handleOAuth}
+            disabled={!editable}
+          >
+            <span>
+              <img
+                id="Microsoft"
+                alt="microsoft-icon"
+                src={microsoftIcon}
+                style={{ height: "40px", width: "40px" }}
+              />
+            </span>
+            Microsoft
           </button>
         </div>
       </form>
@@ -136,8 +193,11 @@ function LoginForm({ history }: RouteComponentProps) {
 
       <div className="mt-2" style={{ paddingBottom: "5px" }}>
         <span>Don't have an account? </span>
-        <span className="register-text" onClick={() => history.push("/register")}>
-          Register here
+        <span
+          className="register-text"
+          onClick={() => history.push("/register")}
+        >
+          Register here!
         </span>
       </div>
     </div>

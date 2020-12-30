@@ -16,6 +16,19 @@ const createUrl = (
 };
 
 export const ApiService = {
+  get: async <T>(
+    endPoint: string,
+    queryParams: object | undefined = undefined
+  ): Promise<T | undefined> => {
+    const url = createUrl(endPoint, queryParams);
+    try {
+      return (await axios.get(url)).data;
+    } catch (error) {
+      const axiosError = error as AxiosError<T>;
+      return axiosError?.response?.data;
+    }
+  },
+
   post: async <T>(
     endPoint: string,
     data: object,

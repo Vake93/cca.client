@@ -3,7 +3,12 @@ import {
   RegisterData,
   RegisterResult,
 } from "./Models/Register";
-import { LoginData, LoginResult, LoginApiResult } from "./Models/Login";
+import {
+  LoginData,
+  LoginResult,
+  LoginApiResult,
+  AuthUrlResult,
+} from "./Models/Login";
 import { ApiService } from "./ApiService";
 
 const UserServiceUrl = process.env.REACT_APP_USER_SERVICE_URL;
@@ -13,6 +18,7 @@ export const UserService = {
     const token = localStorage.getItem("TOKEN");
     return token !== null && token !== "";
   },
+
   loginUser: async (e: LoginData): Promise<LoginResult> => {
     var loginApiResult = await ApiService.post<LoginApiResult>(
       `${UserServiceUrl}/api/users/login`,
@@ -57,5 +63,18 @@ export const UserService = {
       success: false,
       errorMessage: "Something went wrong",
     };
+  },
+
+  getAuthUrl: async (provider: string): Promise<string> => {
+    var authUrlResult = await ApiService.get<AuthUrlResult>(
+      `${UserServiceUrl}/api/users/oauth`,
+      { provider: provider }
+    );
+
+    if (authUrlResult?.url) {
+      return authUrlResult.url;
+    }
+
+    return "";
   },
 };

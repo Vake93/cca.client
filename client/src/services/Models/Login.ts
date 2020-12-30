@@ -14,3 +14,8 @@ export interface LoginApiResult {
   refreshToken?: string;
   errors?: string;
 }
+
+export interface AuthUrlResult {
+  url? : string;
+  errors?: string;
+}
