@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { LoginResult } from "../../services/Models/Login";
@@ -11,7 +12,7 @@ function OAuth({ history, location }: RouteComponentProps) {
       state: params.get("state") || "",
       token: params.get("code") || "",
     }).then(loginDone);
-  });
+  }, []);
 
   const loginDone = (e: LoginResult) => {
     UserService.userProfile().then((profile) => {
