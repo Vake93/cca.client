@@ -1,7 +1,12 @@
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { Profile } from "../../services/Models/User";
 import { UserService } from "../../services/UserService";
 
-function Header({ location, history }: RouteComponentProps) {
+interface HeaderProps extends RouteComponentProps {
+  user?: Profile;
+}
+
+function Header({ location, history, user }: HeaderProps) {
   const getTitle = () => {
     if (location.pathname === "/login") {
       return "Login";
@@ -20,17 +25,15 @@ function Header({ location, history }: RouteComponentProps) {
 
   const logoutUser = () => {
     UserService.logoutUser();
-    history.push("/login")
-  }
+    UserService.userStateUpdate();
+    history.push("/login");
+  };
 
   const renderLogout = () => {
-    if (UserService.loggedInUser()) {
+    if (user && user.email !== "") {
       return (
         <div className="ml-auto">
-          <button
-            className="btn btn-danger"
-            onClick={logoutUser}
-          >
+          <button className="btn btn-danger" onClick={logoutUser}>
             Logout
           </button>
         </div>

@@ -5,7 +5,7 @@ import "./Registration.css";
 import { RegisterResult } from "../../services/Models/Register";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
-function RegistrationForm({ history }: RouteComponentProps) {
+function Registration({ history }: RouteComponentProps) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
@@ -225,4 +225,4 @@ function RegistrationForm({ history }: RouteComponentProps) {
   );
 }
 
-export default withRouter(RegistrationForm);
+export default withRouter(Registration);

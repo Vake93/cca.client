@@ -48,7 +48,10 @@ function Login({ history }: RouteComponentProps) {
       return;
     }
 
-    history.push("/");
+    UserService.userProfile().then((profile) => {
+      UserService.userStateUpdate(profile);
+      history.push("/");
+    });
   };
 
   const handleClearClick = (

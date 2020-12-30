@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { LoginResult } from "../../services/Models/Login";
 import { UserService } from "../../services/UserService";
 
 function OAuth({ history, location }: RouteComponentProps) {
@@ -9,8 +10,15 @@ function OAuth({ history, location }: RouteComponentProps) {
     UserService.oauth({
       state: params.get("state") || "",
       token: params.get("code") || "",
-    }).then(() => history.push("/"));
+    }).then(loginDone);
   });
+
+  const loginDone = (e: LoginResult) => {
+    UserService.userProfile().then((profile) => {
+      UserService.userStateUpdate(profile);
+      history.push("/");
+    });
+  };
 
   return (
     <div className="col-6" style={{ marginTop: "20px" }}>

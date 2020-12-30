@@ -18,11 +18,19 @@ const createUrl = (
 export const ApiService = {
   get: async <T>(
     endPoint: string,
-    queryParams: object | undefined = undefined
+    queryParams: object | undefined = undefined,
+    authToken: string | undefined = undefined
   ): Promise<T | undefined> => {
+    const config = authToken
+      ? {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      : undefined;
     const url = createUrl(endPoint, queryParams);
     try {
-      return (await axios.get(url)).data;
+      return (await axios.get(url, config)).data;
     } catch (error) {
       const axiosError = error as AxiosError<T>;
       return axiosError?.response?.data;
@@ -32,11 +40,19 @@ export const ApiService = {
   post: async <T>(
     endPoint: string,
     data: object,
-    queryParams: object | undefined = undefined
+    queryParams: object | undefined = undefined,
+    authToken: string | undefined = undefined
   ): Promise<T | undefined> => {
     const url = createUrl(endPoint, queryParams);
+    const config = authToken
+      ? {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      : undefined;
     try {
-      return (await axios.post(url, data)).data;
+      return (await axios.post(url, data, config)).data;
     } catch (error) {
       const axiosError = error as AxiosError<T>;
       return axiosError?.response?.data;

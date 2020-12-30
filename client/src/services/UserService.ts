@@ -10,14 +10,29 @@ import {
   AuthUrlResult,
   OAuthData,
 } from "./Models/Login";
+import { Profile, ProfileApiResult } from "./Models/User";
 import { ApiService } from "./ApiService";
 
 const UserServiceUrl = process.env.REACT_APP_USER_SERVICE_URL;
 
 export const UserService = {
-  loggedInUser: (): boolean => {
-    const token = localStorage.getItem("TOKEN");
-    return token !== null && token !== "";
+  userStateUpdate: (e?: Profile) => {},
+
+  userProfile: async (): Promise<Profile | undefined> => {
+    const token = localStorage.getItem("TOKEN") ?? "";
+    var profile = await ApiService.get<ProfileApiResult>(
+      `${UserServiceUrl}/api/users/profile`,
+      {},
+      token
+    );
+
+    if (profile?.email !== "") {
+      return {
+        email: profile?.email || "",
+        firstName: profile?.firstName || "",
+        lastName: profile?.lastName || "",
+      };
+    }
   },
 
   loginUser: async (e: LoginData): Promise<LoginResult> => {
@@ -79,7 +94,7 @@ export const UserService = {
     return "";
   },
 
-  oauth: async(e: OAuthData): Promise<LoginResult> => {
+  oauth: async (e: OAuthData): Promise<LoginResult> => {
     var loginApiResult = await ApiService.post<LoginApiResult>(
       `${UserServiceUrl}/api/users/oauth`,
       e
@@ -99,5 +114,5 @@ export const UserService = {
       success: false,
       errorMessage: "Something went wrong",
     };
-  }
+  },
 };
