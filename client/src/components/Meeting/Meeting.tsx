@@ -15,7 +15,7 @@ interface MeetingParams {
   id?: string;
 }
 
-function Meeting({ history, user }: MeetingProps) {
+function Meeting({ location }: MeetingProps) {
   const { id } = useParams<MeetingParams>();
   const [token, setToken] = useState<string>();
   const [room, setRoom] = useState<Video.Room>();
@@ -28,7 +28,7 @@ function Meeting({ history, user }: MeetingProps) {
         console.log("disconnect");
       }
     };
-  });
+  }, [room]);
 
   useEffect(() => {
     MeetingService.getMeetingToken(id ?? "").then(setToken);
