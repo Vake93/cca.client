@@ -63,7 +63,7 @@ function App() {
           </Route>
           <Route path="/new-event" exact={true}>
             <AuthPage user={user}>
-              <NewEvent />
+              <NewEvent user={user} />
             </AuthPage>
           </Route>
         </Switch>

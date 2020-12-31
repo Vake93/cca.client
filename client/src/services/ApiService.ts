@@ -58,4 +58,24 @@ export const ApiService = {
       return axiosError?.response?.data;
     }
   },
+
+  delete: async (
+    endPoint: string,
+    authToken: string | undefined = undefined
+  ): Promise<boolean> => {
+    const url = createUrl(endPoint, {});
+    const config = authToken
+      ? {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      : undefined;
+    try {
+      await axios.delete(url, config);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  },
 };

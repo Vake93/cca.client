@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { EventService } from "../../services/EventService";
+import { Profile } from "../../services/Models/User";
+import { Validator } from "../../services/Validator";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./NewEvent.css";
+import { CreateEventResult } from "../../services/Models/Event";
 
-function NewEvent({ history }: RouteComponentProps) {
+interface NewEventProps extends RouteComponentProps {
+  user?: Profile;
+}
+
+function NewEvent({ history, user }: NewEventProps) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [editable, setEditable] = useState(true);
@@ -18,7 +26,7 @@ function NewEvent({ history }: RouteComponentProps) {
     title: "",
     startTime: startTime,
     endTime: endTime,
-    eventGuests: [],
+    participants: user?.email ?? "",
     location: "",
     notes: "",
   });
@@ -52,6 +60,9 @@ function NewEvent({ history }: RouteComponentProps) {
     }
   };
 
+  const getParticipants = (): string[] =>
+    eventData.participants.split(/[\r\n]+/);
+
   const validateData = (): boolean => {
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -66,6 +77,19 @@ function NewEvent({ history }: RouteComponentProps) {
       return false;
     }
 
+    const participants = getParticipants();
+    if (participants.length === 0) {
+      setErrorMessage("Event Requires at least one Participant");
+      return false;
+    }
+
+    for (let i = 0; i < participants.length; i++) {
+      if (!Validator.validateEmail(participants[i].trim())) {
+        setErrorMessage("Invalid participant email address");
+        return false;
+      }
+    }
+
     return true;
   };
 
@@ -74,10 +98,35 @@ function NewEvent({ history }: RouteComponentProps) {
   ) => {
     e.preventDefault();
 
-    if (validateData())
-    {
+    if (validateData()) {
       setEditable(false);
+      const participants = getParticipants();
+
+      EventService.createEvent({
+        rowKey: "",
+        title: eventData.title,
+        startTime: eventData.startTime,
+        endTime: eventData.endTime,
+        eventGuests: participants,
+        location: eventData.location,
+        notes: eventData.notes,
+      })
+        .then(createdEvent)
+        .finally(() => {
+          setEditable(true);
+        });
     }
+  };
+
+  const createdEvent = (e: CreateEventResult) => {
+    if (!e.success && e.errorMessage) {
+      setSuccessMessage(null);
+      setErrorMessage(e.errorMessage);
+      return;
+    }
+
+    setSuccessMessage("Event created.");
+    history.goBack();
   };
 
   const handleCancelClick = (
@@ -107,6 +156,7 @@ function NewEvent({ history }: RouteComponentProps) {
           <DatePicker
             className="form-control"
             selected={eventData.startTime}
+            disabled={!editable}
             onChange={(date) => {
               handleDateChange("startTime", date as Date);
             }}
@@ -119,11 +169,24 @@ function NewEvent({ history }: RouteComponentProps) {
           <DatePicker
             className="form-control"
             selected={eventData.endTime}
+            disabled={!editable}
             onChange={(date) => {
               handleDateChange("endTime", date as Date);
             }}
             showTimeSelect
             dateFormat="Pp"
+          />
+        </div>
+        <div className="form-group text-left">
+          <label>Participant Emails</label>
+          <textarea
+            className="form-control"
+            id="participants"
+            placeholder="Participant Emails"
+            rows={5}
+            onChange={handleChange}
+            value={eventData.participants}
+            readOnly={!editable}
           />
         </div>
         <div className="form-group text-left">
@@ -144,6 +207,7 @@ function NewEvent({ history }: RouteComponentProps) {
             className="form-control"
             id="notes"
             placeholder="Notes"
+            rows={7}
             onChange={handleChange}
             value={eventData.notes}
             readOnly={!editable}
