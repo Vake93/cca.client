@@ -24,6 +24,10 @@ function Header({ location, history, user }: HeaderProps) {
       return "New Event";
     }
 
+    if (location.pathname === "/meeting") {
+      return "Meeting";
+    }
+
     if (location.pathname === "/") {
       return "CCA Events";
     }

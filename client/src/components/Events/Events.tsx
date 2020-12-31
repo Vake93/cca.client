@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { EventService } from "../../services/EventService";
-import { MeetingService } from "../../services/MeetingService";
 import { Event } from "../../services/Models/Event";
 import EventItem from "./EventItem";
 
@@ -32,10 +31,7 @@ function Events({ history }: RouteComponentProps) {
   };
 
   const joinEvent = (e: Event) => {
-    setLoading(true);
-    MeetingService.getMeetingToken(e)
-      .then(console.log)
-      .finally(() => setLoading(false));
+    history.push(`/meeting/${e.rowKey}`);
   };
 
   const deleteEvent = (e: Event) => {

@@ -6,6 +6,7 @@ import OAuth from "./components/OAuth/OAuth";
 import Events from "./components/Events/Events";
 import AuthPage from "./components/AuthPage/AuthPage";
 import NewEvent from "./components/Events/NewEvent";
+import Meeting from "./components/Meeting/Meeting";
 
 import { Switch, Route, withRouter } from "react-router-dom";
 import { UserService } from "./services/UserService";
@@ -56,14 +57,19 @@ function App() {
           <Route path="/oauth" exact={true}>
             <OAuth />
           </Route>
-          <Route path="/" exact={true}>
-            <AuthPage user={user}>
-              <Events />
-            </AuthPage>
-          </Route>
           <Route path="/new-event" exact={true}>
             <AuthPage user={user}>
               <NewEvent user={user} />
+            </AuthPage>
+          </Route>
+          <Route path="/meeting/:id" exact={true}>
+            <AuthPage user={user}>
+              <Meeting />
+            </AuthPage>
+          </Route>
+          <Route path="/" exact={true}>
+            <AuthPage user={user}>
+              <Events />
             </AuthPage>
           </Route>
         </Switch>
