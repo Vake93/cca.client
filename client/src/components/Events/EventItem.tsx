@@ -13,6 +13,10 @@ function EventItem({ event, joinEvent, deleteEvent }: EventItemProps) {
     e.preventDefault();
   };
 
+  const joinByPhone = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    window.open(`tel:+19513825731,,,,${event.roomId}`, '_blank', 'noopener,noreferrer')
+  }
+
   return (
     <div
       style={{ cursor: "pointer" }}
@@ -28,6 +32,7 @@ function EventItem({ event, joinEvent, deleteEvent }: EventItemProps) {
       <p className="mb-1">{`End Time: ${moment(event.endTime).format(
         "YYYY-MM-DD HH:mm:ss"
       )} `}</p>
+      <p className="mb-1"><a href={`tel:+19513825731,,,,${event.roomId}`} onClick={joinByPhone}>Join my phone</a></p>
       {event.location && (
         <p className="mb-1">{`Location: ${event.location} `}</p>
       )}

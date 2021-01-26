@@ -3,6 +3,7 @@ export interface Event {
   title: string;
   startTime: Date;
   endTime: Date;
+  roomId: string;
   eventGuests: string[];
   location?: string;
   notes?: string;

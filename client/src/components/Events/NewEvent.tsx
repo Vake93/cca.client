@@ -110,6 +110,7 @@ function NewEvent({ history, user }: NewEventProps) {
         eventGuests: participants,
         location: eventData.location,
         notes: eventData.notes,
+        roomId: "",
       })
         .then(createdEvent)
         .finally(() => {
